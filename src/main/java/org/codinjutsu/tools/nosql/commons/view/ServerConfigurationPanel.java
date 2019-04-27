@@ -45,9 +45,6 @@ public class ServerConfigurationPanel extends JPanel {
     private JTextField userDatabaseField;
     private JCheckBox autoConnectCheckBox;
     private JButton testConnectionButton;
-    private JPanel mongoShellOptionsPanel;
-    private TextFieldWithBrowseButton shellWorkingDirField;
-    private RawCommandLineEditor shellArgumentsLineField;
     private JLabel databaseTipsLabel;
     private JLabel databaseVendorLabel;
 
@@ -87,12 +84,8 @@ public class ServerConfigurationPanel extends JPanel {
 
         autoConnectCheckBox.setName("autoConnectField");
 
-        mongoShellOptionsPanel.setBorder(IdeBorderFactory.createTitledBorder("Mongo shell options", true));
-        shellArgumentsLineField.setDialogCaption("Mongo arguments");
-
         testConnectionButton.setName("testConnection");
 
-        shellWorkingDirField.setText(null);
         initListeners();
     }
 
@@ -134,8 +127,6 @@ public class ServerConfigurationPanel extends JPanel {
         labelField.setText(configuration.getLabel());
         serverUrlField.setText(configuration.getServerUrl());
         userDatabaseField.setText(configuration.getUserDatabase());
-        shellArgumentsLineField.setText(configuration.getShellArgumentsLine());
-        shellWorkingDirField.setText(configuration.getShellWorkingDir());
         autoConnectCheckBox.setSelected(configuration.isConnectOnIdeStartup());
 
         authenticationView.load(configuration.getAuthenticationSettings());
@@ -159,8 +150,6 @@ public class ServerConfigurationPanel extends JPanel {
         configuration.setAuthenticationSettings(authenticationView.create());
 
         configuration.setUserDatabase(getUserDatabase());
-        configuration.setShellArgumentsLine(getShellArgumentsLine());
-        configuration.setShellWorkingDir(getShellWorkingDir());
         configuration.setConnectOnIdeStartup(isAutoConnect());
     }
 
@@ -221,39 +210,22 @@ public class ServerConfigurationPanel extends JPanel {
     }
 
 
-    private String getShellArgumentsLine() {
-        String shellArgumentsLine = shellArgumentsLineField.getText();
-        if (StringUtils.isNotBlank(shellArgumentsLine)) {
-            return shellArgumentsLine;
-        }
-
-        return null;
-    }
-
-    private String getShellWorkingDir() {
-        String shellWorkingDir = shellWorkingDirField.getText();
-        if (StringUtils.isNotBlank(shellWorkingDir)) {
-            return shellWorkingDir;
-        }
-
-        return null;
-    }
 
     private boolean isAutoConnect() {
         return autoConnectCheckBox.isSelected();
     }
 
     private void createUIComponents() {
-        shellWorkingDirField = new TextFieldWithBrowseButton();
-        FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(false, true, false, false, false, false);
-        ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> browseFolderActionListener =
-                new ComponentWithBrowseButton.BrowseFolderActionListener<>("Shell working directory",
-                        null,
-                        shellWorkingDirField,
-                        null,
-                        fileChooserDescriptor,
-                        TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
-        shellWorkingDirField.addBrowseFolderListener(null, browseFolderActionListener, false);
-        shellWorkingDirField.setName("shellWorkingDirField");
+//        shellWorkingDirField = new TextFieldWithBrowseButton();
+//        FileChooserDescriptor fileChooserDescriptor = new FileChooserDescriptor(false, true, false, false, false, false);
+//        ComponentWithBrowseButton.BrowseFolderActionListener<JTextField> browseFolderActionListener =
+//                new ComponentWithBrowseButton.BrowseFolderActionListener<>("Shell working directory",
+//                        null,
+//                        shellWorkingDirField,
+//                        null,
+//                        fileChooserDescriptor,
+//                        TextComponentAccessor.TEXT_FIELD_WHOLE_TEXT);
+//        shellWorkingDirField.addBrowseFolderListener(null, browseFolderActionListener, false);
+//        shellWorkingDirField.setName("shellWorkingDirField");
     }
 }

@@ -31,10 +31,10 @@ import javax.swing.*;
 
 public class NoSqlWindowManager {
 
-    private static final Icon NOSQL_ICON = GuiUtils.loadIcon("nosql_13x13.png");
+    private static final Icon NOSQL_ICON = GuiUtils.loadIcon("redis-13.png");
 
-    public static final String NOSQL_RUNNER = "NoSql Runner";
-    private static final String NOSQL_EXPLORER = "NoSql Explorer";
+    public static final String NOSQL_RUNNER = "Redis Runner";
+    private static final String NOSQL_EXPLORER = "Redis Explorer";
 
     private final Project project;
     private final NoSqlExplorerPanel noSqlExplorerPanel;

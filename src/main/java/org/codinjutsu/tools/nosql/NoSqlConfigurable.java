@@ -66,8 +66,6 @@ public class NoSqlConfigurable extends BaseConfigurable {
     private JPanel mainPanel;
     private JBTable table;
     private final NoSqlServerTableModel tableModel;
-    private ShellPathPanel mongoShellPanel;
-    private ShellPathPanel redisShellPanel;
 
 
     public NoSqlConfigurable(Project project) {
@@ -151,11 +149,8 @@ public class NoSqlConfigurable extends BaseConfigurable {
                             @Override
                             public void run(AnActionButton button) {
                                 stopEditing();
-
-                                SelectDatabaseVendorDialog databaseVendorDialog = new SelectDatabaseVendorDialog(mainPanel);
-
-                                DatabaseVendor selectedDatabaseVendor = databaseVendorDialog.getSelectedDatabaseVendor();
-                                ServerConfiguration serverConfiguration = databaseVendorClientManager.get(DatabaseVendor.REDIS).defaultConfiguration();
+                                DatabaseVendor selectedDatabaseVendor =DatabaseVendor.REDIS;
+                                ServerConfiguration serverConfiguration = databaseVendorClientManager.get(selectedDatabaseVendor).defaultConfiguration();
                                 serverConfiguration.setDatabaseVendor(selectedDatabaseVendor);
 
                                 ConfigurationDialog dialog = new ConfigurationDialog(
@@ -230,7 +225,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
     }
 
     public boolean isModified() {
-        return areConfigurationsModified() || isRedisShellPathModified();
+        return areConfigurationsModified();
     }
 
     @Override
@@ -240,24 +235,24 @@ public class NoSqlConfigurable extends BaseConfigurable {
             configuration.setServerConfigurations(configurations);
         }
 
-        if (isMongoShellPathModified()) {
-            configuration.setShellPath(DatabaseVendor.MONGO, mongoShellPanel.getShellPath());
-        }
-
-        if (isRedisShellPathModified()) {
-            configuration.setShellPath(DatabaseVendor.REDIS, redisShellPanel.getShellPath());
-        }
+//        if (isMongoShellPathModified()) {
+//            configuration.setShellPath(DatabaseVendor.MONGO, mongoShellPanel.getShellPath());
+//        }
+//
+//        if (isRedisShellPathModified()) {
+//            configuration.setShellPath(DatabaseVendor.REDIS, redisShellPanel.getShellPath());
+//        }
 
         NoSqlWindowManager.getInstance(project).apply();
     }
 
-    private boolean isMongoShellPathModified() {
-        return mongoShellPanel.isShellPathModified(NoSqlConfiguration.getInstance(project).getShellPath(DatabaseVendor.MONGO));
-    }
-
-    private boolean isRedisShellPathModified() {
-        return redisShellPanel.isShellPathModified(NoSqlConfiguration.getInstance(project).getShellPath(DatabaseVendor.REDIS));
-    }
+//    private boolean isMongoShellPathModified() {
+//        return mongoShellPanel.isShellPathModified(NoSqlConfiguration.getInstance(project).getShellPath(DatabaseVendor.MONGO));
+//    }
+//
+//    private boolean isRedisShellPathModified() {
+//        return redisShellPanel.isShellPathModified(NoSqlConfiguration.getInstance(project).getShellPath(DatabaseVendor.REDIS));
+//    }
 
     private boolean areConfigurationsModified() {
         List<ServerConfiguration> existingConfigurations = NoSqlConfiguration.getInstance(project).getServerConfigurations();
@@ -283,8 +278,6 @@ public class NoSqlConfigurable extends BaseConfigurable {
     public void disposeUIResources() {
         mainPanel = null;
         tableModel.removeTableModelListener(table);
-        mongoShellPanel.dispose();
-        redisShellPanel.dispose();
         table = null;
     }
 
@@ -298,115 +291,4 @@ public class NoSqlConfigurable extends BaseConfigurable {
     }
 
 
-    private class ShellPathPanel extends JPanel implements Disposable {
-
-        private static final int TIMEOUT_MS = 60 * 1000;
-        private final String testParameter;
-        private LabeledComponent<TextFieldWithBrowseButton> shellPathField;
-
-        private ShellPathPanel(DatabaseVendor databaseVendor, String testParameter) {
-            this.testParameter = testParameter;
-            setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
-            add(createLabel(databaseVendor.name));
-            shellPathField = createShellPathField(databaseVendor);
-            add(shellPathField);
-            add(createTestButton(databaseVendor));
-        }
-
-        private JLabel createLabel(String databaseVendorName) {
-            return new JLabel(String.format("Path to %s CLI:\t\t", databaseVendorName));
-        }
-
-        private JButton createTestButton(final DatabaseVendor databaseVendorName) {
-            JButton testButton = new JButton("Test");
-            testButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent actionEvent) {
-                    testPath(databaseVendorName);
-                }
-            });
-            return testButton;
-        }
-
-
-        private void testPath(final DatabaseVendor databaseVendor) {
-            ProcessOutput processOutput;
-            try {
-                processOutput = ProgressManager.getInstance().runProcessWithProgressSynchronously(new ThrowableComputable<ProcessOutput, Exception>() {
-                    @Override
-                    public ProcessOutput compute() throws Exception {
-                        return checkShellPath(databaseVendor, getShellPath());
-                    }
-                }, "Testing " + databaseVendor.name + " CLI Executable...", true, NoSqlConfigurable.this.project);
-            } catch (ProcessCanceledException pce) {
-                return;
-            } catch (Exception e) {
-                Messages.showErrorDialog(mainPanel, e.getMessage(), "Something wrong happened");
-                return;
-            }
-            if (processOutput != null && processOutput.getExitCode() == 0) {
-                Messages.showInfoMessage(mainPanel, processOutput.getStdout(), databaseVendor.name + " CLI Path Checked");
-            }
-        }
-
-        public ProcessOutput checkShellPath(DatabaseVendor databaseVendor, String shellPath) throws ExecutionException, TimeoutException {
-            if (isBlank(shellPath)) {
-                return null;
-            }
-
-            GeneralCommandLine commandLine = new GeneralCommandLine();
-            commandLine.setExePath(shellPath);
-            if (testParameter != null) {
-                commandLine.addParameter(testParameter);
-            }
-            CapturingProcessHandler handler = new CapturingProcessHandler(commandLine.createProcess(), CharsetToolkit.getDefaultSystemCharset(),"");
-            ProgressIndicator indicator = ProgressManager.getInstance().getProgressIndicator();
-            ProcessOutput result = indicator == null ?
-                    handler.runProcess(TIMEOUT_MS) :
-                    handler.runProcessWithProgressIndicator(indicator);
-            if (result.isTimeout()) {
-                throw new TimeoutException("Couldn't check " + databaseVendor.name + " CLI executable - stopped by timeout.");
-            } else if (result.isCancelled()) {
-                throw new ProcessCanceledException();
-            } else if (result.getExitCode() != 0 || !result.getStderr().isEmpty()) {
-                throw new ExecutionException(String.format("Errors while executing %s. exitCode=%s errors: %s",
-                        commandLine.toString(),
-                        result.getExitCode(),
-                        result.getStderr()));
-            }
-            return result;
-        }
-
-
-        public String getShellPath() {
-            String shellPath = shellPathField.getComponent().getText();
-            if (StringUtils.isNotBlank(shellPath)) {
-                return shellPath;
-            }
-
-            return null;
-        }
-
-        public boolean isShellPathModified(String shellPath) {
-            return !StringUtils.equals(shellPath, getShellPath());
-        }
-
-        private LabeledComponent<TextFieldWithBrowseButton> createShellPathField(DatabaseVendor databaseVendor) {
-            LabeledComponent<TextFieldWithBrowseButton> shellPathField = new LabeledComponent<>();
-            TextFieldWithBrowseButton component = new TextFieldWithBrowseButton();
-            component.getChildComponent().setName("shellPathField");
-            shellPathField.setComponent(component);
-            shellPathField.getComponent().addBrowseFolderListener(String.format("%s CLI configuration", databaseVendor.name), "", null,
-                    new FileChooserDescriptor(true, false, false, false, false, false));
-
-            shellPathField.getComponent().setText(configuration.getShellPath(databaseVendor));
-
-            return shellPathField;
-        }
-
-        @Override
-        public void dispose() {
-            shellPathField = null;
-        }
-    }
 }
