@@ -99,14 +99,14 @@ public class NoSqlConfigurable extends BaseConfigurable {
     @Nullable
     @Override
     public JComponent createComponent() {
-        JPanel databaseVendorShellOptionsPanel = new JPanel();
-        databaseVendorShellOptionsPanel.setLayout(new BoxLayout(databaseVendorShellOptionsPanel, BoxLayout.Y_AXIS));
-        mongoShellPanel = new ShellPathPanel(DatabaseVendor.MONGO, "--version");
-        databaseVendorShellOptionsPanel.add(mongoShellPanel);
-        redisShellPanel = new ShellPathPanel(DatabaseVendor.REDIS, "--version");
-        databaseVendorShellOptionsPanel.add(redisShellPanel);
-
-        mainPanel.add(databaseVendorShellOptionsPanel, BorderLayout.NORTH);
+//        JPanel databaseVendorShellOptionsPanel = new JPanel();
+//        databaseVendorShellOptionsPanel.setLayout(new BoxLayout(databaseVendorShellOptionsPanel, BoxLayout.Y_AXIS));
+//        mongoShellPanel = new ShellPathPanel(DatabaseVendor.MONGO, "--version");
+//        databaseVendorShellOptionsPanel.add(mongoShellPanel);
+//        redisShellPanel = new ShellPathPanel(DatabaseVendor.REDIS, "--version");
+//        databaseVendorShellOptionsPanel.add(redisShellPanel);
+//
+//        mainPanel.add(databaseVendorShellOptionsPanel, BorderLayout.NORTH);
 
 
         PanelWithButtons panelWithButtons = new PanelWithButtons() {
@@ -153,14 +153,9 @@ public class NoSqlConfigurable extends BaseConfigurable {
                                 stopEditing();
 
                                 SelectDatabaseVendorDialog databaseVendorDialog = new SelectDatabaseVendorDialog(mainPanel);
-                                databaseVendorDialog.setTitle("Add a NoSql Server");
-                                databaseVendorDialog.show();
-                                if (!databaseVendorDialog.isOK()) {
-                                    return;
-                                }
 
                                 DatabaseVendor selectedDatabaseVendor = databaseVendorDialog.getSelectedDatabaseVendor();
-                                ServerConfiguration serverConfiguration = databaseVendorClientManager.get(selectedDatabaseVendor).defaultConfiguration();
+                                ServerConfiguration serverConfiguration = databaseVendorClientManager.get(DatabaseVendor.REDIS).defaultConfiguration();
                                 serverConfiguration.setDatabaseVendor(selectedDatabaseVendor);
 
                                 ConfigurationDialog dialog = new ConfigurationDialog(
@@ -168,7 +163,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
                                         serverConfigurationPanelFactory,
                                         serverConfiguration
                                 );
-                                dialog.setTitle("Add a NoSql Server");
+                                dialog.setTitle("Add a Redis Server");
                                 dialog.show();
                                 if (!dialog.isOK()) {
                                     return;
@@ -200,7 +195,7 @@ public class NoSqlConfigurable extends BaseConfigurable {
                                         serverConfigurationPanelFactory,
                                         copiedConfiguration
                                 );
-                                dialog.setTitle("Edit a NoSql Server");
+                                dialog.setTitle("Edit a Redis Server");
                                 dialog.show();
                                 if (!dialog.isOK()) {
                                     return;
