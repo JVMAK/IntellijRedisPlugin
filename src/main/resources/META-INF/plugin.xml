@@ -38,11 +38,12 @@
         <projectService serviceInterface="org.codinjutsu.tools.nosql.redis.RedisUI"
                         serviceImplementation="org.codinjutsu.tools.nosql.redis.RedisUI"/>
 
-
-
         <projectConfigurable instance="org.codinjutsu.tools.nosql.NoSqlConfigurable"
                              id="preferences.mongoOptions"/>
+        <virtualFileSystem implementationClass="org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseFileSystem" key="nosql"/>
 
+        <fileEditorProvider
+                implementation="org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseDataEditorProvider"/>
     </extensions>
 
     <extensionPoints>
@@ -56,14 +57,14 @@
         </component>
     </project-components>
 
-    <application-components>
-        <component>
-            <implementation-class>org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseDataEditorProvider</implementation-class>
-        </component>
-        <component>
-            <implementation-class>org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseFileSystem</implementation-class>
-        </component>
-    </application-components>
+    <!--<application-components>-->
+        <!--<component>-->
+            <!--<implementation-class>org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseDataEditorProvider</implementation-class>-->
+        <!--</component>-->
+        <!--<component>-->
+            <!--<implementation-class>org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseFileSystem</implementation-class>-->
+        <!--</component>-->
+    <!--</application-components>-->
 
     <actions>
         <action id="NoSql.Shell.Execute" class="com.intellij.openapi.actionSystem.EmptyAction"

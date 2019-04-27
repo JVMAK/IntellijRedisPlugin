@@ -29,7 +29,7 @@ import org.codinjutsu.tools.nosql.commons.DatabaseUI;
 import org.jdom.Element;
 import org.jetbrains.annotations.NotNull;
 
-public class NoSqlDatabaseDataEditorProvider implements FileEditorProvider, ApplicationComponent, DumbAware {
+public class NoSqlDatabaseDataEditorProvider implements FileEditorProvider, DumbAware {
 
 
     @Override
@@ -54,13 +54,6 @@ public class NoSqlDatabaseDataEditorProvider implements FileEditorProvider, Appl
         editor.dispose();
     }
 
-    @Override
-    public void initComponent() {
-    }
-
-    @Override
-    public void disposeComponent() {
-    }
 
     @NotNull
     @Override
@@ -84,9 +77,4 @@ public class NoSqlDatabaseDataEditorProvider implements FileEditorProvider, Appl
         return FileEditorPolicy.HIDE_DEFAULT_EDITOR;
     }
 
-    @NotNull
-    @Override
-    public String getComponentName() {
-        return "NoSqlPlugin.NoSqlEditorProvider";
-    }
 }

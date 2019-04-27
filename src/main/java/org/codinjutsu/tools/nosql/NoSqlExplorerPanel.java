@@ -357,7 +357,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
 
 
     public void loadRecords() {
-        NoSqlDatabaseFileSystem.getInstance().openEditor(createNoSqlObjectFile());
+        NoSqlDatabaseFileSystem.openEditor(createNoSqlObjectFile());
     }
 
     @NotNull
