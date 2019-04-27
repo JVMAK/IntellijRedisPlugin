@@ -20,7 +20,7 @@ dependencies {
     implementation 'org.slf4j:slf4j-nop:1.7.12'
 
     // https://mvnrepository.com/artifact/redis.clients/jedis
-    implementation group: 'redis.clients', name: 'jedis', version: '2.7.3'
+    implementation group: 'redis.clients', name: 'jedis', version: '3.0.1'
 
     implementation 'com.couchbase.client:java-client:2.2.1'
     implementation 'commons-lang:commons-lang:2.4'

@@ -20,9 +20,6 @@
     <version>0.1.0</version>
     <vendor email="david.boissier [at] gmail [dot] com" url="http://codinjutsu.blogspot.com">David Boissier</vendor>
 
-    <idea-version since-build="140.0" until-build="141.999999"/>
-    <!--<idea-version since-build="143.0"/>-->
-
     <depends>com.intellij.modules.lang</depends>
 
     <extensions defaultExtensionNs="com.intellij">
@@ -35,28 +32,17 @@
         <projectService serviceInterface="org.codinjutsu.tools.nosql.DatabaseVendorClientManager"
                         serviceImplementation="org.codinjutsu.tools.nosql.DatabaseVendorClientManager"/>
 
-        <!-- Mongo components -->
-        <projectService serviceInterface="org.codinjutsu.tools.nosql.mongo.logic.MongoClient"
-                        serviceImplementation="org.codinjutsu.tools.nosql.mongo.logic.MongoClient"/>
-        <projectService serviceInterface="org.codinjutsu.tools.nosql.mongo.MongoUI"
-                        serviceImplementation="org.codinjutsu.tools.nosql.mongo.MongoUI"/>
-
         <!-- Redis components -->
         <projectService serviceInterface="org.codinjutsu.tools.nosql.redis.logic.RedisClient"
                         serviceImplementation="org.codinjutsu.tools.nosql.redis.logic.RedisClient"/>
         <projectService serviceInterface="org.codinjutsu.tools.nosql.redis.RedisUI"
                         serviceImplementation="org.codinjutsu.tools.nosql.redis.RedisUI"/>
 
-        <!-- Couchbase components -->
-        <projectService serviceInterface="org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient"
-                        serviceImplementation="org.codinjutsu.tools.nosql.couchbase.logic.CouchbaseClient"/>
-        <projectService serviceInterface="org.codinjutsu.tools.nosql.couchbase.CouchbaseUI"
-                        serviceImplementation="org.codinjutsu.tools.nosql.couchbase.CouchbaseUI"/>
+
 
         <projectConfigurable instance="org.codinjutsu.tools.nosql.NoSqlConfigurable"
                              id="preferences.mongoOptions"/>
-        <configurationType implementation="org.codinjutsu.tools.nosql.mongo.runner.MongoRunConfigurationType"/>
-        <configurationProducer implementation="org.codinjutsu.tools.nosql.mongo.runner.MongoScriptRunConfigurationProducer"/>
+
     </extensions>
 
     <extensionPoints>
