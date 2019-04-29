@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.mongo.model;
+package org.codinjutsu.tools.nosql.json.model;
 
 public enum JsonDataType {
 

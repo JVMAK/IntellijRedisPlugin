@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.codinjutsu.tools.nosql.mongo.view;
+package org.codinjutsu.tools.nosql.json.view;
 
 import com.intellij.ui.TreeTableSpeedSearch;
 import com.intellij.ui.treeStructure.treetable.ListTreeTableModelOnColumns;
