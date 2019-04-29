@@ -1,6 +1,6 @@
 buildscript {
     //162 181 183 172 171 173 191
-    ext.ideaVersion = 173
+    ext.ideaVersion = 181
 }
 
 plugins {

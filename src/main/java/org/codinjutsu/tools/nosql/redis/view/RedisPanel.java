@@ -51,6 +51,8 @@ import org.codinjutsu.tools.nosql.redis.view.action.SetSeparatorAction;
 import javax.swing.*;
 import javax.swing.tree.DefaultMutableTreeNode;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class RedisPanel extends NoSqlResultView<RedisResult> {
 
@@ -102,6 +104,13 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
 
         filterField = new JBTextField("*");
         filterField.setColumns(10);
+
+        filterField.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                executeQuery();
+            }
+        });
 
         NonOpaquePanel westPanel = new NonOpaquePanel();
 

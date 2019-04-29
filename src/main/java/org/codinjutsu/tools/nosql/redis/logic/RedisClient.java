@@ -16,6 +16,7 @@
 
 package org.codinjutsu.tools.nosql.redis.logic;
 
+import com.google.common.collect.Maps;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
@@ -31,7 +32,6 @@ import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.codinjutsu.tools.nosql.redis.model.RedisQuery;
 import org.codinjutsu.tools.nosql.redis.model.RedisResult;
-import org.fest.util.Maps;
 import org.jetbrains.annotations.NotNull;
 import org.omg.SendingContext.RunTime;
 import redis.clients.jedis.Jedis;
