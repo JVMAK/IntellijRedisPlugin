@@ -15,10 +15,10 @@
   -->
 
 <idea-plugin version="2">
-    <name>NoSql Plugin</name>
-    <description>NoSql database integration for Intellij</description>
+    <name>Redis Plugin</name>
+    <description>Redis integration for Intellij</description>
     <version>0.1.0</version>
-    <vendor email="david.boissier [at] gmail [dot] com" url="http://codinjutsu.blogspot.com">David Boissier</vendor>
+    <vendor email="gejun123456@gmail.com" >bruce ge</vendor>
 
     <depends>com.intellij.modules.lang</depends>
 
@@ -75,19 +75,13 @@
     </actions>
 
     <description><![CDATA[
-    <p>
-        This tool allows accessing to NoSql databases and provides CRUD operations.<br>
-        Documentation is available on the <a href="https://github.com/dboissier/nosql4idea/">GitHub project</a>
-    </p>
-            <br>
-            <br>
-    <p>
-        This tool is free for personal and commercial usage.<br>
-        <a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=4S464JTADXFMJ">Donations</a> are welcomed.
-    </p>
+    <p>The plugin is forked from https://github.com/dboissier/nosql4idea mainly focus on for redis</p>
 ]]> </description>
 
     <change-notes><![CDATA[
-<a href="https://github.com/dboissier/nosql4idea/blob/master/CHANGELOG.txt">Changelog</a>
+        <strong>0.1</strong>
+        <ul>
+            <li>[NEW]base redis support</li>
+        </ul>
 ]]> </change-notes>
 </idea-plugin>
