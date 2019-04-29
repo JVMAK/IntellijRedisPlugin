@@ -126,10 +126,14 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
 
 
     public void reloadServerConfiguration(final DefaultMutableTreeNode serverNode, final boolean expandAfterLoading) {
+        //todo why this would happen. should send error to server.
+        if (serverNode == null ||serverNode.getUserObject()==null) {
+
+            return;
+        }
         databaseTree.setPaintBusy(true);
 
         ApplicationManager.getApplication().executeOnPooledThread(new Runnable() {
-
             @Override
             public void run() {
                 final DatabaseServer databaseServer = (DatabaseServer) serverNode.getUserObject();
@@ -353,7 +357,6 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
     }
 
 
-
     public void loadRecords() {
         NoSqlDatabaseFileSystem.openEditor(createNoSqlObjectFile());
     }
@@ -368,7 +371,6 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
 //        }
         return new RedisObjectFile(project, selectedConfiguration, getSelectedRedisDatabase());
     }
-
 
 
     private Tree createTree() {
