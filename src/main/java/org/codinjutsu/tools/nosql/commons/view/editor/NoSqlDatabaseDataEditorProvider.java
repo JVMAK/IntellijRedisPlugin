@@ -16,7 +16,6 @@
 
 package org.codinjutsu.tools.nosql.commons.view.editor;
 
-import com.intellij.openapi.components.ApplicationComponent;
 import com.intellij.openapi.fileEditor.FileEditor;
 import com.intellij.openapi.fileEditor.FileEditorPolicy;
 import com.intellij.openapi.fileEditor.FileEditorProvider;

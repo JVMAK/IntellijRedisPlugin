@@ -162,6 +162,7 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
         actionResultGroup.add(collapseAllAction);
 
         ActionToolbar actionToolBar = ActionManager.getInstance().createActionToolbar("MongoResultGroupActions", actionResultGroup, true);
+
         actionToolBar.setLayoutPolicy(ActionToolbar.AUTO_LAYOUT_POLICY);
         JComponent actionToolBarComponent = actionToolBar.getComponent();
         actionToolBarComponent.setBorder(null);

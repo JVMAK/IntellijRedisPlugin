@@ -1,3 +1,8 @@
+buildscript {
+    //162 181 183 172 171 173 191
+    ext.ideaVersion = 181
+}
+
 plugins {
     id 'java'
     id 'org.jetbrains.intellij' version '0.4.8'
@@ -41,10 +46,32 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
 }
 intellij {
-    version 'IU-2019.1'
+    if (ideaVersion == 162) {
+        version 'IU-2016.2'
+    }
+    if (ideaVersion == 171) {
+        version 'IU-2017.1'
+    }
 
-    plugins 'Kotlin','spring', 'DatabaseTools', 'java-i18n', 'properties', 'springboot', 'com.bruce.intellijplugin.generatesetter:2.4','PsiViewer:191.4212','org.nik.presentation-assistant:1.0.1'
+    if (ideaVersion == 172) {
+        version 'IU-2017.2.6'
+    }
+    if (ideaVersion == 173) {
+        version 'IU-2017.3'
+    }
+    if (ideaVersion == 181) {
+        version 'IU-2018.1.6' //IntelliJ IDEA dependency
+    } else if (ideaVersion == 183) {
+        version 'IU-2018.3.6'
+    } else if(ideaVersion == 191){
+        version 'IU-2019.1'
+    }
 
+    if(ideaVersion == 181) {
+        plugins 'Kotlin','spring', 'DatabaseTools','Struts2','javaEE','PersistenceSupport','CSS','JavaScriptLanguage', 'SpringData','java-i18n', 'properties', 'springboot','com.bruce.intellijplugin.generatesetter:2.4', 'MyBatisLogPlugin:2.0.3', 'org.nik.presentation-assistant:1.0.1','Lombook Plugin:0.23-2018.1','PsiViewer:2018.1.2'
+    } else if(ideaVersion==191) {
+        plugins 'Kotlin','spring', 'DatabaseTools', 'java-i18n', 'properties', 'springboot', 'com.bruce.intellijplugin.generatesetter:2.4', 'MyBatisLogPlugin:2.0.3','PsiViewer:191.4212','org.nik.presentation-assistant:1.0.1'
+    }
     sandboxDirectory 'sandbox'
 
     updateSinceUntilBuild false
