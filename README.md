@@ -1,9 +1,9 @@
-# Redis Plugin for IntelliJ IDEA version 0.1.0-SNAPSHOT
+# Intellij Redis plugin
 
-The plugin was forked from https://github.com/dboissier/nosql4idea
+The plugin is forked from https://github.com/dboissier/nosql4idea
 
+Only support for Redis
 
-
-
+![redisPlugin](https://raw.githubusercontent.com/gejun123456/IntellijRedisPlugin/master/screenshot/redisPlugin.gif)
 
 

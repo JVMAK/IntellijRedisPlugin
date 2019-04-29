@@ -75,7 +75,10 @@
     </actions>
 
     <description><![CDATA[
-    <p>The plugin is forked from https://github.com/dboissier/nosql4idea mainly focus on for redis</p>
+        <div>
+            <p>The plugin is forked from https://github.com/dboissier/nosql4idea mainly focus on for redis</p>
+            <p><a href="https://github.com/gejun123456/redisPluginIssues">GitHub</a>
+        </div>
 ]]> </description>
 
     <change-notes><![CDATA[
