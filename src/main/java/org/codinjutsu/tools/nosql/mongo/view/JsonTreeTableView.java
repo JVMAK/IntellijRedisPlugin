@@ -25,8 +25,7 @@ import com.intellij.util.containers.Convertor;
 import com.intellij.util.ui.ColumnInfo;
 import com.intellij.util.ui.UIUtil;
 import com.intellij.util.ui.tree.TreeUtil;
-import com.mongodb.DBObject;
-import org.bson.types.ObjectId;
+import com.sun.corba.se.spi.ior.ObjectId;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlTreeNode;
 import org.codinjutsu.tools.nosql.commons.view.nodedescriptor.NodeDescriptor;
 import org.codinjutsu.tools.nosql.commons.view.renderer.KeyCellRenderer;
@@ -154,9 +153,9 @@ public class JsonTreeTableView extends TreeTable {
         @Override
         public boolean isCellEditable(NoSqlTreeNode treeNode) {
             Object value = treeNode.getDescriptor().getValue();
-            if (value instanceof DBObject) {
-                return false;
-            }
+//            if (value instanceof DBObject) {
+//                return false;
+//            }
 
             if (value instanceof ObjectId) {
                 return false;
