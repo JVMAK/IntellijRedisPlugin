@@ -42,7 +42,9 @@ import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
 import org.codinjutsu.tools.nosql.commons.view.action.AddKeyValueAction;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
 import org.codinjutsu.tools.nosql.json.view.JsonTreeTableView;
+import org.codinjutsu.tools.nosql.redis.logic.EmptyQueryExecutor;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
+import org.codinjutsu.tools.nosql.redis.logic.RedisQueryExecutor;
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisQuery;
 import org.codinjutsu.tools.nosql.redis.model.RedisResult;
@@ -109,7 +111,7 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
         filterField.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                executeQuery();
+                executeQuery(new EmptyQueryExecutor());
             }
         });
 
@@ -216,7 +218,7 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
 
     @Override
     public void showResults() {
-        executeQuery();
+        executeQuery(new EmptyQueryExecutor());
     }
 
     @Override
@@ -230,9 +232,9 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
     }
 
     @Override
-    public void executeQuery() {
+    public void executeQuery(RedisQueryExecutor executor) {
         errorPanel.setVisible(false);
-        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Executing query", true)  {
+        ProgressManager.getInstance().run(new Task.Backgroundable(project, "Executing query", true) {
             @Override
             public void run(ProgressIndicator indicator) {
                 try {
@@ -242,8 +244,6 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
                             loadingDecorator.startLoading(false);
                         }
                     });
-
-
                     loadAndDisplayResults(getFilter(), isGroupDataEnabled(), getGroupSeparator());
                 } catch (final Exception ex) {
                     GuiUtils.runInSwingThread(new Runnable() {

@@ -19,7 +19,7 @@ class AddKeyValueAction(var redisPanel: RedisPanel) :
     }
 
     override fun actionPerformed(e: AnActionEvent?) {
-        println("start add it");
+
     }
 
 

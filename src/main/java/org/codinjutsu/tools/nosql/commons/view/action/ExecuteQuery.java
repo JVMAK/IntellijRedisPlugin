@@ -20,6 +20,7 @@ import com.intellij.icons.AllIcons;
 import com.intellij.openapi.actionSystem.AnAction;
 import com.intellij.openapi.actionSystem.AnActionEvent;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
+import org.codinjutsu.tools.nosql.redis.logic.EmptyQueryExecutor;
 
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -35,7 +36,7 @@ public class ExecuteQuery<G extends NoSqlResultView> extends AnAction {
 
     @Override
     public void actionPerformed(AnActionEvent anActionEvent) {
-        resultView.executeQuery();
+        resultView.executeQuery(new EmptyQueryExecutor());
     }
 
     @Override

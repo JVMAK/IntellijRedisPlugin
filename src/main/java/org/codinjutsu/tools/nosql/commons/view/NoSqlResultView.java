@@ -17,6 +17,8 @@
 package org.codinjutsu.tools.nosql.commons.view;
 
 import com.intellij.openapi.Disposable;
+import org.codinjutsu.tools.nosql.redis.logic.RedisQueryExecutor;
+import org.codinjutsu.tools.nosql.redis.model.RedisQuery;
 
 import javax.swing.*;
 
@@ -28,5 +30,5 @@ public abstract class NoSqlResultView<R> extends JPanel implements Disposable {
 
     public abstract R getRecords();
 
-    public abstract void executeQuery();
+    public abstract void executeQuery(RedisQueryExecutor redisQueryExecutor);
 }

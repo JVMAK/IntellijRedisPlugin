@@ -20,6 +20,7 @@ import com.google.common.collect.Maps;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.util.ArrayUtil;
 import kotlin.text.Charsets;
 import org.apache.commons.lang.StringUtils;
 import org.codinjutsu.tools.nosql.DatabaseVendor;
@@ -100,56 +101,64 @@ public class RedisClient implements DatabaseClient {
     }
 
 
+    public ExecuteResult executeQuery(ServerConfiguration serverConfiguration, RedisDatabase database, RedisQueryExecutor query) {
+        if (createJedis(serverConfiguration) instanceof Jedis) {
+            Jedis jedis = (Jedis) createJedis(serverConfiguration);
+            jedis.connect();
+            int index = Integer.parseInt(database.getName());
+            jedis.select(index);
+            return query.handleRedisQuery(jedis);
+        } else if (createJedis(serverConfiguration) instanceof JedisCluster) {
+            JedisCluster jedisCluster = (JedisCluster) createJedis(serverConfiguration);
+            return query.handleRedisQuery(jedisCluster);
+        } else {
+            throw new IllegalStateException("should not happen");
+        }
+    }
+
+
     public RedisResult loadRecords(ServerConfiguration serverConfiguration, RedisDatabase database, RedisQuery query) {
-
-
         RedisResult redisResult = new RedisResult();
+        if (createJedis(serverConfiguration) instanceof Jedis) {
+            Jedis jedis = (Jedis) createJedis(serverConfiguration);
+            jedis.connect();
+            int index = Integer.parseInt(database.getName());
+            jedis.select(index);
+            Set<byte[]> keys = jedis.keys(query.getFilter().getBytes(Charsets.UTF_8));
+            for (byte[] key : keys) {
+                //may be null pointer.
+                String type = jedis.type(key);
+                RedisKeyType keyType = RedisKeyType.getKeyType(type);
+                if (RedisKeyType.LIST.equals(keyType)) {
+                    List<byte[]> values = jedis.lrange(key, 0, -1);
+                    List<String> collect = values.stream().map(b -> convertByteToString(b)).collect(Collectors.toList());
+                    redisResult.addList(convertByteToString(key), collect);
+                } else if (RedisKeyType.SET.equals(keyType)) {
+                    Set<byte[]> values = jedis.smembers(key);
+                    Set<String> collect = values.stream().map(b -> convertByteToString(b)).collect(Collectors.toSet());
+                    redisResult.addSet(convertByteToString(key), collect);
+                } else if (RedisKeyType.HASH.equals(keyType)) {
+                    Map<byte[], byte[]> values = jedis.hgetAll(key);
+                    Map<String, String> myValues = Maps.newHashMap();
+                    for (byte[] bytes : values.keySet()) {
+                        myValues.put(convertByteToString(bytes), convertByteToString(values.get(bytes)));
+                    }
+                    redisResult.addHash(convertByteToString(key), myValues);
+                } else if (RedisKeyType.ZSET.equals(keyType)) {
+                    Set<Tuple> valuesWithScores = jedis.zrangeByScoreWithScores(key, "-inf".getBytes(Charsets.UTF_8), "+inf".getBytes(Charsets.UTF_8));
+                    redisResult.addSortedSet(convertByteToString(key), valuesWithScores);
+                } else if (RedisKeyType.STRING.equals(keyType)) {
+                    byte[] value = jedis.get(key);
+                    redisResult.addString(convertByteToString(key), convertByteToString(value));
+                } else {
+                    //ignore this.
+                    throw new RuntimeException("unSupport type:" + type);
+                }
+            }
+        } else if (createJedis(serverConfiguration) instanceof JedisCluster) {
+            JedisCluster jedisCluster = (JedisCluster) createJedis(serverConfiguration);
 
-
-       if (createJedis(serverConfiguration) instanceof Jedis) {
-           Jedis jedis = (Jedis) createJedis(serverConfiguration);
-           jedis.connect();
-
-           int index = Integer.parseInt(database.getName());
-           jedis.select(index);
-
-           Set<byte[]> keys = jedis.keys(query.getFilter().getBytes(Charsets.UTF_8));
-           for (byte[] key : keys) {
-               //may be null pointer.
-               String type = jedis.type(key);
-               RedisKeyType keyType = RedisKeyType.getKeyType(type);
-               if (RedisKeyType.LIST.equals(keyType)) {
-                   List<byte[]> values = jedis.lrange(key, 0, -1);
-                   List<String> collect = values.stream().map(b -> convertByteToString(b)).collect(Collectors.toList());
-                   redisResult.addList(convertByteToString(key), collect);
-               } else if (RedisKeyType.SET.equals(keyType)) {
-                   Set<byte[]> values = jedis.smembers(key);
-                   Set<String> collect = values.stream().map(b -> convertByteToString(b)).collect(Collectors.toSet());
-                   redisResult.addSet(convertByteToString(key), collect);
-               } else if (RedisKeyType.HASH.equals(keyType)) {
-                   Map<byte[], byte[]> values = jedis.hgetAll(key);
-                   Map<String, String> myValues = Maps.newHashMap();
-                   for (byte[] bytes : values.keySet()) {
-                       myValues.put(convertByteToString(bytes), convertByteToString(values.get(bytes)));
-                   }
-                   redisResult.addHash(convertByteToString(key), myValues);
-               } else if (RedisKeyType.ZSET.equals(keyType)) {
-                   Set<Tuple> valuesWithScores = jedis.zrangeByScoreWithScores(key, "-inf".getBytes(Charsets.UTF_8), "+inf".getBytes(Charsets.UTF_8));
-                   redisResult.addSortedSet(convertByteToString(key), valuesWithScores);
-               } else if (RedisKeyType.STRING.equals(keyType)) {
-                   byte[] value = jedis.get(key);
-                   redisResult.addString(convertByteToString(key), convertByteToString(value));
-               } else {
-                   //ignore this.
-                   throw new RuntimeException("unSupport type:" + type);
-               }
-           }
-        }else if (createJedis(serverConfiguration) instanceof JedisCluster) {
-           JedisCluster jedisCluster = (JedisCluster) createJedis(serverConfiguration);
-
-       }
-
-
+        }
         return redisResult;
     }
 
@@ -162,7 +171,7 @@ public class RedisClient implements DatabaseClient {
 
     private JedisCommands createJedis(ServerConfiguration serverConfiguration) {
         String[] servers = serverConfiguration.getServerUrl().split(",");
-        if (!org.fest.util.Arrays.isNullOrEmpty(servers)) {
+        if (!ArrayUtil.isEmpty(servers)) {
             if (servers.length > 1) {
                 Set<HostAndPort> hostAndPortSet = new HashSet<>();
                 for (String hostAndPort : servers) {
