@@ -5,6 +5,7 @@ import org.codinjutsu.tools.nosql.DatabaseVendor
 import org.codinjutsu.tools.nosql.ServerConfiguration
 import org.codinjutsu.tools.nosql.redis.logic.EmptyQueryExecutor
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient
+import org.codinjutsu.tools.nosql.redis.logic.RedisQueryExecutor
 import org.codinjutsu.tools.nosql.redis.model.RedisDatabase
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType
 import org.codinjutsu.tools.nosql.redis.model.RedisQuery
@@ -37,7 +38,7 @@ open abstract class RedisBaseTest {
     }
 
 
-    fun checkAndGetResult(emptyQueryExecutor: EmptyQueryExecutor, vararg results:String): List<RedisRecord<Any>> {
+    fun checkAndGetResult(emptyQueryExecutor: RedisQueryExecutor, vararg results:String): List<RedisRecord<Any>> {
         val redisClient = RedisClient()
         val serverConfiguration = ServerConfiguration()
         serverConfiguration.databaseVendor = DatabaseVendor.REDIS

@@ -1,13 +1,10 @@
 package org.codinjutsu.tools.nosql.redis.executors
 
-import org.apache.commons.lang3.exception.ExceptionUtils
 import org.codinjutsu.tools.nosql.dialog.KeyValueResult
-import org.codinjutsu.tools.nosql.redis.logic.ExecuteResult
 import org.codinjutsu.tools.nosql.redis.logic.RedisQueryExecutor
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisCommands
-import java.lang.RuntimeException
 
 
 /**
