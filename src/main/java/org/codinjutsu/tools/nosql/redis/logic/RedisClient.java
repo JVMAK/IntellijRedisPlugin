@@ -103,20 +103,20 @@ public class RedisClient implements DatabaseClient {
     }
 
 
-    public ExecuteResult executeQuery(ServerConfiguration serverConfiguration, RedisDatabase database, RedisQueryExecutor query) {
-        if (createJedis(serverConfiguration) instanceof Jedis) {
-            Jedis jedis = (Jedis) createJedis(serverConfiguration);
-            jedis.connect();
-            int index = Integer.parseInt(database.getName());
-            jedis.select(index);
-            return query.handleRedisQuery(jedis);
-        } else if (createJedis(serverConfiguration) instanceof JedisCluster) {
-            JedisCluster jedisCluster = (JedisCluster) createJedis(serverConfiguration);
-            return query.handleRedisQuery(jedisCluster);
-        } else {
-            throw new IllegalStateException("should not happen");
-        }
-    }
+//    public ExecuteResult executeQuery(ServerConfiguration serverConfiguration, RedisDatabase database, RedisQueryExecutor query) {
+//        if (createJedis(serverConfiguration) instanceof Jedis) {
+//            Jedis jedis = (Jedis) createJedis(serverConfiguration);
+//            jedis.connect();
+//            int index = Integer.parseInt(database.getName());
+//            jedis.select(index);
+//            return query.handleRedisQuery(jedis);
+//        } else if (createJedis(serverConfiguration) instanceof JedisCluster) {
+//            JedisCluster jedisCluster = (JedisCluster) createJedis(serverConfiguration);
+//            return query.handleRedisQuery(jedisCluster);
+//        } else {
+//            throw new IllegalStateException("should not happen");
+//        }
+//    }
 
 
     public RedisResult loadRecords(ServerConfiguration serverConfiguration, RedisDatabase database, RedisQuery query, RedisQueryExecutor executor) {
@@ -127,15 +127,7 @@ public class RedisClient implements DatabaseClient {
             int index = Integer.parseInt(database.getName());
             jedis.select(index);
 
-            ExecuteResult executeResult = executor.handleRedisQuery(jedis);
-            if(executeResult.getHasError()){
-                ApplicationManager.getApplication().invokeLater(new Runnable() {
-                    @Override
-                    public void run() {
-                        Messages.showErrorDialog(executeResult.getErrorMsg(), "Redis Execute Failed");
-                    }
-                });
-            }
+            executor.handleRedisQuery(jedis);
 
             Set<byte[]> keys = jedis.keys(query.getFilter().getBytes(Charsets.UTF_8));
             for (byte[] key : keys) {

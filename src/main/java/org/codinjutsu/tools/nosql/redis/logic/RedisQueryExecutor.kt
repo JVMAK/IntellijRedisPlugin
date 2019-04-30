@@ -9,5 +9,5 @@ import redis.clients.jedis.JedisCommands
  * @author bruce ge
  */
 interface RedisQueryExecutor {
-    fun handleRedisQuery(command: JedisCommands): ExecuteResult
+    fun handleRedisQuery(command: JedisCommands)
 }

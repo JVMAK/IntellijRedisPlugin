@@ -36,15 +36,7 @@
             <constraints>
               <grid row="1" column="1" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
             </constraints>
-            <properties>
-              <model>
-                <item value="Simple"/>
-                <item value="List"/>
-                <item value="Set"/>
-                <item value="Hash"/>
-                <item value="SortedSet"/>
-              </model>
-            </properties>
+            <properties/>
           </component>
           <component id="61a0b" class="javax.swing.JLabel">
             <constraints>

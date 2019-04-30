@@ -10,6 +10,7 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import org.apache.commons.lang3.StringUtils;
+import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,6 +33,10 @@ public class AddKeyValueDialog extends DialogWrapper {
         super(project, true);
         myProject = project;
         $$$setupUI$$$();
+        for (RedisKeyType value : RedisKeyType.values()) {
+            keyType.addItem(value);
+        }
+        keyType.setSelectedItem(RedisKeyType.STRING);
         setTitle("Add key value for redis");
         init();
     }
@@ -44,7 +49,7 @@ public class AddKeyValueDialog extends DialogWrapper {
 
     @Override
     protected void doOKAction() {
-        keyValueResult = new KeyValueResult(keyTextField.getText(), (String) keyType.getSelectedItem(), valueTextField.getText());
+        keyValueResult = new KeyValueResult(keyTextField.getText(), (RedisKeyType) keyType.getSelectedItem(), valueTextField.getText());
         super.doOKAction();
     }
 
@@ -92,13 +97,6 @@ public class AddKeyValueDialog extends DialogWrapper {
         label2.setText("type");
         panel1.add(label2, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         keyType = new ComboBox();
-        final DefaultComboBoxModel defaultComboBoxModel1 = new DefaultComboBoxModel();
-        defaultComboBoxModel1.addElement("Simple");
-        defaultComboBoxModel1.addElement("List");
-        defaultComboBoxModel1.addElement("Set");
-        defaultComboBoxModel1.addElement("Hash");
-        defaultComboBoxModel1.addElement("SortedSet");
-        keyType.setModel(defaultComboBoxModel1);
         panel1.add(keyType, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         final JLabel label3 = new JLabel();
         label3.setText("value");
