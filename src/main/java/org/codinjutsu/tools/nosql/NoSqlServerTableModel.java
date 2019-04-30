@@ -30,26 +30,30 @@ class NoSqlServerTableModel extends AbstractTableModel implements ItemRemovable 
     };
     private final Class[] columnClasses = new Class[]{String.class, DatabaseVendor.class, String.class, Boolean.class};
 
-    private final List<ServerConfiguration> mongoServerConfigurations;
+    private final List<ServerConfiguration> serverConfigurations;
 
-    public NoSqlServerTableModel(List<ServerConfiguration> mongoServerConfigurations) {
-        this.mongoServerConfigurations = mongoServerConfigurations;
+    public NoSqlServerTableModel(List<ServerConfiguration> serverConfigurations) {
+        this.serverConfigurations = serverConfigurations;
     }
 
+    @Override
     public String getColumnName(int column) {
         return columnNames[column];
     }
 
+    @Override
     public Class getColumnClass(int column) {
         return columnClasses[column];
     }
 
+    @Override
     public int getColumnCount() {
         return columnNames.length;
     }
 
+    @Override
     public int getRowCount() {
-        return mongoServerConfigurations.size();
+        return serverConfigurations.size();
     }
 
     @Override
@@ -57,8 +61,9 @@ class NoSqlServerTableModel extends AbstractTableModel implements ItemRemovable 
         return false;
     }
 
+    @Override
     public Object getValueAt(int row, int column) {
-        ServerConfiguration configuration = mongoServerConfigurations.get(row);
+        ServerConfiguration configuration = serverConfigurations.get(row);
         switch (column) {
             case 0: { // "Label" column
                 return configuration.getLabel();
@@ -78,8 +83,9 @@ class NoSqlServerTableModel extends AbstractTableModel implements ItemRemovable 
         }
     }
 
+    @Override
     public void setValueAt(Object value, int row, int column) {
-        ServerConfiguration configuration = mongoServerConfigurations.get(row);
+        ServerConfiguration configuration = serverConfigurations.get(row);
         switch (column) {
             case 0: {
                 configuration.setLabel((String) value);
@@ -103,8 +109,9 @@ class NoSqlServerTableModel extends AbstractTableModel implements ItemRemovable 
         }
     }
 
+    @Override
     public void removeRow(int index) {
-        mongoServerConfigurations.remove(index);
+        serverConfigurations.remove(index);
         fireTableRowsDeleted(index, index);
     }
 }
