@@ -7,6 +7,7 @@ import org.codinjutsu.tools.nosql.redis.logic.RedisQueryExecutor
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType
 import redis.clients.jedis.Jedis
 import redis.clients.jedis.JedisCommands
+import java.lang.RuntimeException
 
 
 /**
@@ -33,6 +34,7 @@ class AddKeyValueExecutor(val keyValueResult: KeyValueResult) : RedisQueryExecut
                     val split = value.split(",").toTypedArray();
                     command.sadd(key, *split);
                 }
+                else -> throw RuntimeException("not supported now");
             }
         }
 

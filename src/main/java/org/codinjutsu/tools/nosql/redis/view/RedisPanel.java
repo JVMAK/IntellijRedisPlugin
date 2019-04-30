@@ -253,7 +253,9 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
                         public void run() {
                             errorPanel.invalidate();
                             errorPanel.removeAll();
-                            errorPanel.add(new ErrorPanel(ex), BorderLayout.CENTER);
+                            GridConstraints gridConstraints = new GridConstraints();
+                            gridConstraints.setAnchor(GridConstraints.ANCHOR_CENTER);
+                            errorPanel.add(new ErrorPanel(ex), gridConstraints);
                             errorPanel.validate();
                             errorPanel.setVisible(true);
                         }
