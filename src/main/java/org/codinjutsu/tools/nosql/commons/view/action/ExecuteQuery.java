@@ -30,7 +30,6 @@ public class ExecuteQuery<G extends NoSqlResultView> extends AnAction {
     public ExecuteQuery(G resultView) {
         super("Execute query", "Execute query with options", AllIcons.Actions.Execute);
         this.resultView = resultView;
-
         registerCustomShortcutSet(KeyEvent.VK_ENTER, InputEvent.CTRL_MASK, resultView);
     }
 

@@ -127,7 +127,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
 
     public void reloadServerConfiguration(final DefaultMutableTreeNode serverNode, final boolean expandAfterLoading) {
         //todo why this would happen. should send error to server.
-        if (serverNode == null ||serverNode.getUserObject()==null) {
+        if (serverNode == null || serverNode.getUserObject() == null) {
 
             return;
         }
@@ -274,11 +274,15 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
     }
 
     private void expandAll() {
-        TreeUtil.expandAll(databaseTree);
+        if (databaseTree != null) {
+            TreeUtil.expandAll(databaseTree);
+        }
     }
 
     private void collapseAll() {
-        TreeUtil.collapseAll(databaseTree, 1);
+        if (databaseTree != null) {
+            TreeUtil.collapseAll(databaseTree, 1);
+        }
     }
 
     @Override
