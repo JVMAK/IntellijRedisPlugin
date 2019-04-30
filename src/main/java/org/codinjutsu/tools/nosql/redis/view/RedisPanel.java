@@ -39,6 +39,7 @@ import org.codinjutsu.tools.nosql.ServerConfiguration;
 import org.codinjutsu.tools.nosql.commons.utils.GuiUtils;
 import org.codinjutsu.tools.nosql.commons.view.ErrorPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
+import org.codinjutsu.tools.nosql.commons.view.action.AddKeyValueAction;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
 import org.codinjutsu.tools.nosql.json.view.JsonTreeTableView;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
@@ -167,6 +168,7 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
         actionResultGroup.add(new EnableGroupingAction(this));
         actionResultGroup.add(new SetSeparatorAction(this));
         actionResultGroup.addSeparator();
+        actionResultGroup.add(new AddKeyValueAction(this));
         actionResultGroup.add(expandAllAction);
         actionResultGroup.add(collapseAllAction);
 
