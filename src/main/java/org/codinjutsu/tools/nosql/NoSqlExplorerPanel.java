@@ -260,6 +260,7 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
 
                 if (mouseEvent.getClickCount() == 2) {
                     if (treeNode.getUserObject() instanceof DatabaseServer && treeNode.getChildCount() == 0) {
+                        //may be selected node is null.
                         reloadServerConfiguration(getSelectedServerNode(), true);
                     }
                     if (treeNode.getUserObject() instanceof RedisDatabase) {

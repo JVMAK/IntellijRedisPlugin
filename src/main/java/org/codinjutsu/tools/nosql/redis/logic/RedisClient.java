@@ -152,11 +152,15 @@ public class RedisClient implements DatabaseClient {
 
     private Jedis createJedis(ServerConfiguration serverConfiguration) {
         String redisUri = "redis://";
+//        if (StringUtils.isNotEmpty(password)) {
+//            redisUri += ":" + password + "@";
+//        }
+        redisUri += serverConfiguration.getServerUrl();
+        Jedis jedis = new Jedis(redisUri);
         String password = serverConfiguration.getAuthenticationSettings().getPassword();
         if (StringUtils.isNotEmpty(password)) {
-            redisUri += ":" + password + "@";
+            jedis.auth(password);
         }
-        redisUri += serverConfiguration.getServerUrl();
-        return new Jedis(redisUri);
+        return jedis;
     }
 }
