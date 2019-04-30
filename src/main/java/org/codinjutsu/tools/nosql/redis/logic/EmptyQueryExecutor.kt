@@ -9,6 +9,6 @@ import redis.clients.jedis.JedisCommands
  */
 class EmptyQueryExecutor : RedisQueryExecutor {
     override fun handleRedisQuery(command: JedisCommands): ExecuteResult {
-        return ExecuteResult(false, "", null);
+        return ExecuteResult(false, "");
     }
 }

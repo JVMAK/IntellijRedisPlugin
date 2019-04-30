@@ -17,9 +17,11 @@
 package org.codinjutsu.tools.nosql.redis.logic;
 
 import com.google.common.collect.Maps;
+import com.intellij.openapi.application.ApplicationManager;
 import com.intellij.openapi.components.ServiceManager;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.openapi.project.Project;
+import com.intellij.openapi.ui.Messages;
 import com.intellij.util.ArrayUtil;
 import kotlin.text.Charsets;
 import org.apache.commons.lang.StringUtils;
@@ -117,13 +119,24 @@ public class RedisClient implements DatabaseClient {
     }
 
 
-    public RedisResult loadRecords(ServerConfiguration serverConfiguration, RedisDatabase database, RedisQuery query) {
+    public RedisResult loadRecords(ServerConfiguration serverConfiguration, RedisDatabase database, RedisQuery query, RedisQueryExecutor executor) {
         RedisResult redisResult = new RedisResult();
         if (createJedis(serverConfiguration) instanceof Jedis) {
             Jedis jedis = (Jedis) createJedis(serverConfiguration);
             jedis.connect();
             int index = Integer.parseInt(database.getName());
             jedis.select(index);
+
+            ExecuteResult executeResult = executor.handleRedisQuery(jedis);
+            if(executeResult.getHasError()){
+                ApplicationManager.getApplication().invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        Messages.showErrorDialog(executeResult.getErrorMsg(), "Redis Execute Failed");
+                    }
+                });
+            }
+
             Set<byte[]> keys = jedis.keys(query.getFilter().getBytes(Charsets.UTF_8));
             for (byte[] key : keys) {
                 //may be null pointer.
