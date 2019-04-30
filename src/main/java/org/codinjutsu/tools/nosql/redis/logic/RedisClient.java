@@ -32,15 +32,9 @@ import org.codinjutsu.tools.nosql.redis.model.RedisDatabase;
 import org.codinjutsu.tools.nosql.redis.model.RedisKeyType;
 import org.codinjutsu.tools.nosql.redis.model.RedisQuery;
 import org.codinjutsu.tools.nosql.redis.model.RedisResult;
-import org.jetbrains.annotations.NotNull;
-import org.omg.SendingContext.RunTime;
-import redis.clients.jedis.Jedis;
-import redis.clients.jedis.Tuple;
+import redis.clients.jedis.*;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class RedisClient implements DatabaseClient {
@@ -55,31 +49,35 @@ public class RedisClient implements DatabaseClient {
 
     @Override
     public void connect(ServerConfiguration serverConfiguration) {
-        Jedis jedis = createJedis(serverConfiguration);
-        jedis.connect();
-        String userDatabase = serverConfiguration.getUserDatabase();
-        int index = 0;
-        if (StringUtils.isNotEmpty(userDatabase)) {
-            index = Integer.parseInt(userDatabase);
+        if (createJedis(serverConfiguration) instanceof Jedis) {
+            Jedis jedis = (Jedis) createJedis(serverConfiguration);
+            jedis.connect();
+            String userDatabase = serverConfiguration.getUserDatabase();
+            int index = 0;
+            if (StringUtils.isNotEmpty(userDatabase)) {
+                index = Integer.parseInt(userDatabase);
+            }
+            jedis.select(index);
         }
-        jedis.select(index);
     }
 
     @Override
     public void loadServer(DatabaseServer databaseServer) {
-        Jedis jedis = createJedis(databaseServer.getConfiguration());
-        List<String> databaseNumberTuple = jedis.configGet("databases");
-        List<Database> databases = new LinkedList<>();
-        String userDatabase = databaseServer.getConfiguration().getUserDatabase();
-        if (StringUtils.isNotEmpty(userDatabase)) {
-            databases.add(new RedisDatabase(userDatabase));
-        } else {
-            int totalNumberOfDatabase = Integer.parseInt(databaseNumberTuple.get(1));
-            for (int databaseNumber = 0; databaseNumber < totalNumberOfDatabase; databaseNumber++) {
-                databases.add(new RedisDatabase(String.valueOf(databaseNumber)));
+        if (createJedis(databaseServer.getConfiguration()) instanceof Jedis) {
+            Jedis jedis = (Jedis) createJedis(databaseServer.getConfiguration());
+            List<String> databaseNumberTuple = jedis.configGet("databases");
+            List<Database> databases = new LinkedList<>();
+            String userDatabase = databaseServer.getConfiguration().getUserDatabase();
+            if (StringUtils.isNotEmpty(userDatabase)) {
+                databases.add(new RedisDatabase(userDatabase));
+            } else {
+                int totalNumberOfDatabase = Integer.parseInt(databaseNumberTuple.get(1));
+                for (int databaseNumber = 0; databaseNumber < totalNumberOfDatabase; databaseNumber++) {
+                    databases.add(new RedisDatabase(String.valueOf(databaseNumber)));
+                }
             }
+            databaseServer.setDatabases(databases);
         }
-        databaseServer.setDatabases(databases);
     }
 
     @Override
@@ -103,43 +101,55 @@ public class RedisClient implements DatabaseClient {
 
 
     public RedisResult loadRecords(ServerConfiguration serverConfiguration, RedisDatabase database, RedisQuery query) {
-        Jedis jedis = createJedis(serverConfiguration);
-        jedis.connect();
-        RedisResult redisResult = new RedisResult();
-        int index = Integer.parseInt(database.getName());
-        jedis.select(index);
 
-        Set<byte[]> keys = jedis.keys(query.getFilter().getBytes(Charsets.UTF_8));
-        for (byte[] key : keys) {
-            //may be null pointer.
-            String type = jedis.type(key);
-            RedisKeyType keyType = RedisKeyType.getKeyType(type);
-            if (RedisKeyType.LIST.equals(keyType)) {
-                List<byte[]> values = jedis.lrange(key, 0, -1);
-                List<String> collect = values.stream().map(b -> convertByteToString(b)).collect(Collectors.toList());
-                redisResult.addList(convertByteToString(key), collect);
-            } else if (RedisKeyType.SET.equals(keyType)) {
-                Set<byte[]> values = jedis.smembers(key);
-                Set<String> collect = values.stream().map(b -> convertByteToString(b)).collect(Collectors.toSet());
-                redisResult.addSet(convertByteToString(key), collect);
-            } else if (RedisKeyType.HASH.equals(keyType)) {
-                Map<byte[], byte[]> values = jedis.hgetAll(key);
-                Map<String, String> myValues = Maps.newHashMap();
-                for (byte[] bytes : values.keySet()) {
-                    myValues.put(convertByteToString(bytes), convertByteToString(values.get(bytes)));
-                }
-                redisResult.addHash(convertByteToString(key), myValues);
-            } else if (RedisKeyType.ZSET.equals(keyType)) {
-                Set<Tuple> valuesWithScores = jedis.zrangeByScoreWithScores(key, "-inf".getBytes(Charsets.UTF_8), "+inf".getBytes(Charsets.UTF_8));
-                redisResult.addSortedSet(convertByteToString(key), valuesWithScores);
-            } else if (RedisKeyType.STRING.equals(keyType)) {
-                byte[] value = jedis.get(key);
-                redisResult.addString(convertByteToString(key), convertByteToString(value));
-            } else {
-                //ignore this.
-                throw new RuntimeException("unSupport type:" + type);
-            }
-        }
+
+        RedisResult redisResult = new RedisResult();
+
+
+       if (createJedis(serverConfiguration) instanceof Jedis) {
+           Jedis jedis = (Jedis) createJedis(serverConfiguration);
+           jedis.connect();
+
+           int index = Integer.parseInt(database.getName());
+           jedis.select(index);
+
+           Set<byte[]> keys = jedis.keys(query.getFilter().getBytes(Charsets.UTF_8));
+           for (byte[] key : keys) {
+               //may be null pointer.
+               String type = jedis.type(key);
+               RedisKeyType keyType = RedisKeyType.getKeyType(type);
+               if (RedisKeyType.LIST.equals(keyType)) {
+                   List<byte[]> values = jedis.lrange(key, 0, -1);
+                   List<String> collect = values.stream().map(b -> convertByteToString(b)).collect(Collectors.toList());
+                   redisResult.addList(convertByteToString(key), collect);
+               } else if (RedisKeyType.SET.equals(keyType)) {
+                   Set<byte[]> values = jedis.smembers(key);
+                   Set<String> collect = values.stream().map(b -> convertByteToString(b)).collect(Collectors.toSet());
+                   redisResult.addSet(convertByteToString(key), collect);
+               } else if (RedisKeyType.HASH.equals(keyType)) {
+                   Map<byte[], byte[]> values = jedis.hgetAll(key);
+                   Map<String, String> myValues = Maps.newHashMap();
+                   for (byte[] bytes : values.keySet()) {
+                       myValues.put(convertByteToString(bytes), convertByteToString(values.get(bytes)));
+                   }
+                   redisResult.addHash(convertByteToString(key), myValues);
+               } else if (RedisKeyType.ZSET.equals(keyType)) {
+                   Set<Tuple> valuesWithScores = jedis.zrangeByScoreWithScores(key, "-inf".getBytes(Charsets.UTF_8), "+inf".getBytes(Charsets.UTF_8));
+                   redisResult.addSortedSet(convertByteToString(key), valuesWithScores);
+               } else if (RedisKeyType.STRING.equals(keyType)) {
+                   byte[] value = jedis.get(key);
+                   redisResult.addString(convertByteToString(key), convertByteToString(value));
+               } else {
+                   //ignore this.
+                   throw new RuntimeException("unSupport type:" + type);
+               }
+           }
+        }else if (createJedis(serverConfiguration) instanceof JedisCluster) {
+           JedisCluster jedisCluster = (JedisCluster) createJedis(serverConfiguration);
+
+       }
+
+
         return redisResult;
     }
 
@@ -150,17 +160,33 @@ public class RedisClient implements DatabaseClient {
         return new String(b, Charsets.UTF_8);
     }
 
-    private Jedis createJedis(ServerConfiguration serverConfiguration) {
-        String redisUri = "redis://";
-//        if (StringUtils.isNotEmpty(password)) {
-//            redisUri += ":" + password + "@";
-//        }
-        redisUri += serverConfiguration.getServerUrl();
-        Jedis jedis = new Jedis(redisUri);
-        String password = serverConfiguration.getAuthenticationSettings().getPassword();
-        if (StringUtils.isNotEmpty(password)) {
-            jedis.auth(password);
+    private JedisCommands createJedis(ServerConfiguration serverConfiguration) {
+        String[] servers = serverConfiguration.getServerUrl().split(",");
+        if (!org.fest.util.Arrays.isNullOrEmpty(servers)) {
+            if (servers.length > 1) {
+                Set<HostAndPort> hostAndPortSet = new HashSet<>();
+                for (String hostAndPort : servers) {
+                    String[] hostAndPortArry = hostAndPort.split(":");
+                    HostAndPort andPort = new HostAndPort(hostAndPortArry[0], Integer.valueOf(hostAndPortArry[1]));
+                    hostAndPortSet.add(andPort);
+                }
+                return new JedisCluster(hostAndPortSet);
+            }
+            if (servers.length == 1) {
+                String redisUri = "redis://";
+                String redisPwd = serverConfiguration.getAuthenticationSettings().getPassword();
+                if (StringUtils.isNotEmpty(redisPwd)) {
+                    redisUri += ":" + redisPwd + "@";
+                }
+                redisUri += serverConfiguration.getServerUrl();
+                Jedis jedis = new Jedis(redisUri);
+                String password = serverConfiguration.getAuthenticationSettings().getPassword();
+                if (StringUtils.isNotEmpty(password)) {
+                    jedis.auth(password);
+                }
+                return jedis;
+            }
         }
-        return jedis;
+        return null;
     }
 }
