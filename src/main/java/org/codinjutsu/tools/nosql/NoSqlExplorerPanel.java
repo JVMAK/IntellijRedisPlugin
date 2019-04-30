@@ -274,13 +274,13 @@ public class NoSqlExplorerPanel extends JPanel implements Disposable {
     }
 
     private void expandAll() {
-        if (databaseTree != null) {
+        if (databaseTree != null&& databaseTree.getModel()!=null) {
             TreeUtil.expandAll(databaseTree);
         }
     }
 
     private void collapseAll() {
-        if (databaseTree != null) {
+        if (databaseTree != null && databaseTree.getModel()!=null) {
             TreeUtil.collapseAll(databaseTree, 1);
         }
     }
