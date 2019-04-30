@@ -39,7 +39,7 @@
                         serviceImplementation="org.codinjutsu.tools.nosql.redis.RedisUI"/>
 
         <projectConfigurable instance="org.codinjutsu.tools.nosql.NoSqlConfigurable"
-                             id="preferences.mongoOptions"/>
+                             id="preferences.redisPlugin"/>
         <virtualFileSystem implementationClass="org.codinjutsu.tools.nosql.commons.view.editor.NoSqlDatabaseFileSystem" key="nosql"/>
 
         <fileEditorProvider
