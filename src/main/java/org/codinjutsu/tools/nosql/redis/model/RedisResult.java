@@ -28,24 +28,24 @@ public class RedisResult {
     private final List<RedisRecord> redisRecords = new LinkedList<RedisRecord>();
 
 
-    public void addString(String key, String value) {
-        redisRecords.add(new RedisRecord<String>(RedisKeyType.STRING, key, value));
+    public void addString(String key, String value,byte[] keyBytes) {
+        redisRecords.add(new RedisRecord<String>(RedisKeyType.STRING, key, value,keyBytes));
     }
 
-    public void addList(String key, List values) {
-        redisRecords.add(new RedisRecord<List>(RedisKeyType.LIST, key, values));
+    public void addList(String key, List values,byte[] keyBytes) {
+        redisRecords.add(new RedisRecord<List>(RedisKeyType.LIST, key, values,keyBytes));
     }
 
-    public void addSet(String key, Set values) {
-        redisRecords.add(new RedisRecord<Set>(RedisKeyType.SET, key, values));
+    public void addSet(String key, Set values,byte[] keyBytes) {
+        redisRecords.add(new RedisRecord<Set>(RedisKeyType.SET, key, values,keyBytes));
     }
 
-    public void addHash(String key, Map values) {
-        redisRecords.add(new RedisRecord<Map>(RedisKeyType.HASH, key, values));
+    public void addHash(String key, Map values,byte[] keyBytes) {
+        redisRecords.add(new RedisRecord<Map>(RedisKeyType.HASH, key, values,keyBytes));
     }
 
-    public void addSortedSet(String key, Set<Tuple> values) {
-        redisRecords.add(new RedisRecord<Set<Tuple>>(RedisKeyType.ZSET, key, values));
+    public void addSortedSet(String key, Set<Tuple> values,byte[] keyBytes) {
+        redisRecords.add(new RedisRecord<Set<Tuple>>(RedisKeyType.ZSET, key, values,keyBytes));
     }
 
     public List<RedisRecord> getResults() {

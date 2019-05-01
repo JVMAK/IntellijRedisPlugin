@@ -38,24 +38,27 @@ public class RedisKeyValueDescriptor implements NodeDescriptor {
     private final RedisKeyType keyType;
     private final String key;
     private final Object value;
+    private final byte[] keyBytes;
 
     private final SimpleTextAttributes valueTextAttributes;
     private final Icon icon;
 
-    public static RedisKeyValueDescriptor createDescriptor(RedisKeyType keyType, String key, Object value) {
-        return new RedisKeyValueDescriptor(keyType, key, value, StyleAttributesProvider.getStringAttribute());
+    public static RedisKeyValueDescriptor createDescriptor(RedisKeyType keyType, String key, Object value, byte[] keyBytes) {
+        return new RedisKeyValueDescriptor(keyType, key, value, StyleAttributesProvider.getStringAttribute(), keyBytes);
     }
 
     public static NodeDescriptor createDescriptor(String key, String value) {
-        return createDescriptor(null, key, value);
+        //todo need fix this.
+        return createDescriptor(null, key, value,null);
     }
 
-    public RedisKeyValueDescriptor(RedisKeyType keyType, String key, Object value, SimpleTextAttributes valueTextAttributes) {
+    public RedisKeyValueDescriptor(RedisKeyType keyType, String key, Object value, SimpleTextAttributes valueTextAttributes, byte[] keyBytes) {
         this.keyType = keyType;
         this.key = key;
         this.value = value;
         this.icon = findIcon(value);
         this.valueTextAttributes = valueTextAttributes;
+        this.keyBytes = keyBytes;
     }
 
     private Icon findIcon(Object object) {
@@ -122,5 +125,9 @@ public class RedisKeyValueDescriptor implements NodeDescriptor {
             return StringUtils.abbreviateInCenter(stringifiedValue, MAX_LENGTH);
         }
         return stringifiedValue;
+    }
+
+    public byte[] getKeyBytes() {
+        return keyBytes;
     }
 }

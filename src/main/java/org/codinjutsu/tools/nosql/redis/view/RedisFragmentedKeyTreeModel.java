@@ -155,7 +155,7 @@ public class RedisFragmentedKeyTreeModel extends DefaultTreeModel {
         NoSqlTreeNode node = findNodeByKey(parentTargetNode, keyFragment);
         if (node == null) {
             if (explodedKey.length == 1) {
-                node = new NoSqlTreeNode(RedisKeyValueDescriptor.createDescriptor(sourceDescriptor.getKeyType(), keyFragment, sourceDescriptor.getValue()));
+                node = new NoSqlTreeNode(RedisKeyValueDescriptor.createDescriptor(sourceDescriptor.getKeyType(), keyFragment, sourceDescriptor.getValue(),sourceDescriptor.getKeyBytes()));
             } else {
                 node = new NoSqlTreeNode(FragmentedKeyNodeDescriptor.createDescriptor(keyFragment));
             }

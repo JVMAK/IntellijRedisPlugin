@@ -137,24 +137,24 @@ public class RedisClient implements DatabaseClient {
                 if (RedisKeyType.LIST.equals(keyType)) {
                     List<byte[]> values = jedis.lrange(key, 0, -1);
                     List<String> collect = values.stream().map(b -> convertByteToString(b)).collect(Collectors.toList());
-                    redisResult.addList(convertByteToString(key), collect);
+                    redisResult.addList(convertByteToString(key), collect,key);
                 } else if (RedisKeyType.SET.equals(keyType)) {
                     Set<byte[]> values = jedis.smembers(key);
                     Set<String> collect = values.stream().map(b -> convertByteToString(b)).collect(Collectors.toSet());
-                    redisResult.addSet(convertByteToString(key), collect);
+                    redisResult.addSet(convertByteToString(key), collect,key);
                 } else if (RedisKeyType.HASH.equals(keyType)) {
                     Map<byte[], byte[]> values = jedis.hgetAll(key);
                     Map<String, String> myValues = Maps.newHashMap();
                     for (byte[] bytes : values.keySet()) {
                         myValues.put(convertByteToString(bytes), convertByteToString(values.get(bytes)));
                     }
-                    redisResult.addHash(convertByteToString(key), myValues);
+                    redisResult.addHash(convertByteToString(key), myValues,key);
                 } else if (RedisKeyType.ZSET.equals(keyType)) {
                     Set<Tuple> valuesWithScores = jedis.zrangeByScoreWithScores(key, "-inf".getBytes(Charsets.UTF_8), "+inf".getBytes(Charsets.UTF_8));
-                    redisResult.addSortedSet(convertByteToString(key), valuesWithScores);
+                    redisResult.addSortedSet(convertByteToString(key), valuesWithScores,key);
                 } else if (RedisKeyType.STRING.equals(keyType)) {
                     byte[] value = jedis.get(key);
-                    redisResult.addString(convertByteToString(key), convertByteToString(value));
+                    redisResult.addString(convertByteToString(key), convertByteToString(value),key);
                 } else {
                     //ignore this.
                     throw new RuntimeException("unSupport type:" + type);

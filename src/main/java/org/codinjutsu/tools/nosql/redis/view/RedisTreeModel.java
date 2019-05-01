@@ -42,7 +42,7 @@ public class RedisTreeModel {
 
     private static void processRecord(NoSqlTreeNode rootNode, RedisRecord redisRecord) {
         RedisKeyType keyType = redisRecord.getKeyType();
-        NoSqlTreeNode treeNode = new NoSqlTreeNode(RedisKeyValueDescriptor.createDescriptor(keyType, redisRecord.getKey(), redisRecord.getValue()));
+        NoSqlTreeNode treeNode = new NoSqlTreeNode(RedisKeyValueDescriptor.createDescriptor(keyType, redisRecord.getKey(), redisRecord.getValue(),redisRecord.getKeyNameBytes()));
         if (RedisKeyType.LIST.equals(keyType)) {
             List<String> valuesFromList = (List<String>) redisRecord.getValue();
             for (int index = 0; index < valuesFromList.size(); index++) {

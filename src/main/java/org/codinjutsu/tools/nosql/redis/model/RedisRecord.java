@@ -20,11 +20,13 @@ public class RedisRecord<T> {
     private final RedisKeyType keyType;
     private final String keyName;
     private final T keyValue;
+    private final byte[] keyNameBytes;
 
-    public RedisRecord(RedisKeyType keyType, String keyName, T keyValue) {
+    public RedisRecord(RedisKeyType keyType, String keyName, T keyValue,byte[] keyNameBytes) {
         this.keyType = keyType;
         this.keyName = keyName;
         this.keyValue = keyValue;
+        this.keyNameBytes = keyNameBytes;
     }
 
     public RedisKeyType getKeyType() {
@@ -37,5 +39,10 @@ public class RedisRecord<T> {
 
     public T getValue() {
         return keyValue;
+    }
+
+
+    public byte[] getKeyNameBytes() {
+        return keyNameBytes;
     }
 }
