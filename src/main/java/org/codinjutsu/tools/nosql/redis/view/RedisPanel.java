@@ -43,6 +43,7 @@ import org.codinjutsu.tools.nosql.commons.view.ErrorPanel;
 import org.codinjutsu.tools.nosql.commons.view.NoSqlResultView;
 import org.codinjutsu.tools.nosql.commons.view.action.AddKeyValueAction;
 import org.codinjutsu.tools.nosql.commons.view.action.ExecuteQuery;
+import org.codinjutsu.tools.nosql.commons.view.action.RemoveKeyAction;
 import org.codinjutsu.tools.nosql.json.view.JsonTreeTableView;
 import org.codinjutsu.tools.nosql.redis.logic.EmptyQueryExecutor;
 import org.codinjutsu.tools.nosql.redis.logic.RedisClient;
@@ -173,6 +174,7 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
         actionResultGroup.add(new SetSeparatorAction(this));
         actionResultGroup.addSeparator();
         actionResultGroup.add(new AddKeyValueAction(this));
+        actionResultGroup.add(new RemoveKeyAction(this));
         actionResultGroup.add(expandAllAction);
         actionResultGroup.add(collapseAllAction);
 
@@ -244,9 +246,10 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
                         @Override
                         public void run() {
                             loadingDecorator.startLoading(false);
+                            //todo may need to check this.
+                            loadAndDisplayResults(getFilter(), isGroupDataEnabled(), getGroupSeparator(), executor);
                         }
                     });
-                    loadAndDisplayResults(getFilter(), isGroupDataEnabled(), getGroupSeparator(), executor);
                 } catch (final Exception ex) {
                     GuiUtils.runInSwingThread(new Runnable() {
                         @Override
@@ -276,6 +279,11 @@ public class RedisPanel extends NoSqlResultView<RedisResult> {
     @Override
     public void dispose() {
 
+    }
+
+
+    public JsonTreeTableView getResultTableView() {
+        return resultTableView;
     }
 
     public boolean isGroupDataEnabled() {

@@ -20,6 +20,7 @@ import com.intellij.openapi.ui.Messages;
 import com.intellij.ui.HoverHyperlinkLabel;
 import com.intellij.ui.JBColor;
 import com.intellij.ui.components.JBLabel;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import javax.swing.*;
 import javax.swing.event.HyperlinkEvent;
@@ -38,7 +39,7 @@ public class ErrorPanel extends JPanel {
             @Override
             public void hyperlinkUpdate(HyperlinkEvent hyperlinkEvent) {
                 if (hyperlinkEvent.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
-                    Messages.showErrorDialog(ex.toString(), "Error During Query Execution");
+                    Messages.showErrorDialog(ExceptionUtils.getStackTrace(ex), "Error During Query Execution");
                 }
             }
         });

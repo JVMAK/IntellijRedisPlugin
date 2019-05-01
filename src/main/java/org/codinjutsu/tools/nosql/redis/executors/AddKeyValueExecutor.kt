@@ -19,6 +19,7 @@ class AddKeyValueExecutor(val keyValueResult: KeyValueResult) : RedisQueryExecut
             val key = keyValueResult.key
             val value = keyValueResult.value
             when (keyValueResult.keyType) {
+                //how to set charset for them.
                 RedisKeyType.STRING -> {
                     command.set(key, value)
                 }
