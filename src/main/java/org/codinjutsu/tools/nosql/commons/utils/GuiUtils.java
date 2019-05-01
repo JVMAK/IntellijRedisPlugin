@@ -99,4 +99,27 @@ public class GuiUtils {
             }
         });
     }
+
+    public static Font getTheFont(String fontName, int style, int size, Font currentFont) {
+        if (currentFont == null) return null;
+        String resultName;
+        if (fontName == null) {
+            resultName = currentFont.getName();
+        } else {
+            Font testFont = new Font(fontName, Font.PLAIN, 10);
+            if (testFont.canDisplay('a') && testFont.canDisplay('1')) {
+                resultName = fontName;
+            } else {
+                resultName = currentFont.getName();
+            }
+        }
+        return new Font(resultName, style >= 0 ? style : currentFont.getStyle(), size >= 0 ? size : currentFont.getSize());
+    }
+
+    public static void setFontToComponent(int fontName, JLabel component) {
+        Font theFont = getTheFont(null, fontName, -1, component.getFont());
+        if (theFont != null) {
+            component.setFont(theFont);
+        }
+    }
 }
