@@ -20,7 +20,6 @@ class RemoveKeyExecutor(val lists: Set<String>) : RedisQueryExecutor {
                 command.del(oneKey);
             }
         }
-
     }
 
 }
